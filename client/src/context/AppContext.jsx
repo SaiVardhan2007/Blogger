@@ -21,7 +21,8 @@ export const AppProvider = ({ children })=>{
            const {data} = await axios.get('/api/blog/all');
            data.success ? setBlogs(data.blogs) : toast.error(data.message)
         } catch (error) {
-            toast.error(error.message)
+            console.error('Failed to fetch blogs:', error);
+            // Don't show network error toast on initial load
         }
     }
 

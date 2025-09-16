@@ -8,27 +8,24 @@ export const addBlog = async (req, res)=>{
         const {title, subTitle, description, category, isPublished} = JSON.parse(req.body.blog);
         const imageFile = req.file;
 
-        // Check if all fields are present
         if(!title || !description || !category || !imageFile){
             return res.json({success: false, message: "Missing required fields" })
         }
 
         const fileBuffer = fs.readFileSync(imageFile.path)
 
-        // Upload Image to ImageKit
         const response = await imagekit.upload({
             file: fileBuffer,
             fileName: imageFile.originalname,
             folder: "/blogs"
         })
 
-        // optimization through imagekit URL transformation
         const optimizedImageUrl = imagekit.url({
             path: response.filePath,
             transformation: [
-                {quality: 'auto'}, // Auto compression
-                {format: 'webp'},  // Convert to modern format
-                {width: '1280'}    // Width resizing
+                {quality: 'auto'}, 
+                {format: 'webp'}, 
+                {width: '1280'}   
             ]
         });
 
@@ -69,10 +66,6 @@ export const deleteBlogById = async (req, res) =>{
     try {
         const { id } = req.body;
         await Blog.findByIdAndDelete(id);
-
-        // Delete all comments associated with the blog
-        await Comment.deleteMany({blog: id});
-
         res.json({success: true, message: 'Blog deleted successfully'})
     } catch (error) {
         res.json({success: false, message: error.message})
@@ -97,7 +90,14 @@ export const togglePublish = async (req, res) =>{
 export const generateContent = async (req, res)=>{
     try {
         const {prompt} = req.body;
-        const content = await main(prompt + ' Generate a blog content for this topic in simple text format')
+        
+        if (!prompt || prompt.trim() === '') {
+            return res.json({success: false, message: "Prompt is required"});
+        }
+        
+        const fullPrompt = `Write a comprehensive blog post about "${prompt}". Include an engaging introduction, detailed main content with multiple sections, and a conclusion. Make it informative and well-structured.`;
+        
+        const content = await main(fullPrompt);
         res.json({success: true, content})
     } catch (error) {
         res.json({success: false, message: error.message})

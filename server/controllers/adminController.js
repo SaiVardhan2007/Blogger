@@ -14,10 +14,10 @@ export const adminLogin = async (req, res)=>{
         res.json({success: false, message: error.message})
     }
 }
-
+    
 export const getDashboard = async (req, res) =>{
     try {
-        const recentBlogs = await Blog.find({}).sort({ createdAt: -1 }).limit(5);
+        const recentBlogs = await Blog.find({}).sort({ createdAt: -1 });
         const blogs = await Blog.countDocuments();
 
         const dashboardData = {

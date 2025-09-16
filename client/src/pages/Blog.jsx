@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {useParams} from 'react-router-dom'
-import { assets, blog_data, comments_data } from '../assets/assets'
+import { assets,} from '../assets/assets'
 import Navbar from '../components/Navbar'
 import Moment from 'moment'
 import Footer from '../components/Footer'
@@ -15,9 +15,7 @@ const Blog = () => {
   const {axios} = useAppContext()
 
   const [data, setData] = useState(null)
-  const [name, setName] = useState('')
-  const [content, setContent] = useState('')
-
+ 
   const fetchBlogData = async ()=>{
     try {
       const {data} = await axios.get(`/api/blog/${id}`)
