@@ -3,8 +3,47 @@ import axios from "axios";
 import {useNavigate} from 'react-router-dom'
 import toast from 'react-hot-toast';
 
+// Determine the correct base URL based on environment
+const getBaseURL = () => {
+    // If VITE_BASE_URL is set, use it
+    if (import.meta.env.VITE_BASE_URL) {
+        return import.meta.env.VITE_BASE_URL;
+    }
+    
+    // Fallback: determine based on current location
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:4000';
+    }
+    
+    // For production, you need to set your actual backend URL
+    // Replace this with your actual Vercel backend URL
+    return 'https://your-actual-backend-url.vercel.app';
+};
 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+axios.defaults.baseURL = getBaseURL();
+
+// Add request interceptor for debugging
+axios.interceptors.request.use(
+    (config) => {
+        console.log('API Request to:', config.baseURL + config.url);
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Add response interceptor for better error handling
+axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        console.error('API Error:', error.message);
+        if (error.code === 'ERR_NETWORK') {
+            toast.error('Unable to connect to server. Please check if the backend is running.');
+        }
+        return Promise.reject(error);
+    }
+);
 
 const AppContext = createContext();
 
