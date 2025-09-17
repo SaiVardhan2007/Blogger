@@ -7,7 +7,7 @@ import Dashboard from './pages/admin/Dashboard'
 import AddBlog from './pages/admin/AddBlog'
 import Login from './components/admin/Login'
 import 'quill/dist/quill.snow.css'
-import {Toaster} from 'react-hot-toast'
+import {Toaster} from 'react-hot-toast'//for good looking notifications
 import { useAppContext } from './context/AppContext'
 
 const App = () => {
